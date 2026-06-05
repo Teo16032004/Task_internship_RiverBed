@@ -21,9 +21,9 @@ Pentru fiecare bug, scrie 2-3 propoziții:
 - **Cum l-am fixat:** practic acea functia de list_events din storage returneaza o lista care evident e indexata de la 0. dar acolo e returnat cu offset=0 adunat cu 1, deci porneste de la al doilea element si la fel si la liminta superioara nu trebuie adunat 1. deci return ul devine return all_events[offset : offset+ limit] si asa se rezolva ambele teste
 
 ### Bug #3
-- **Unde era:**
-- **Cum l-am găsit:**
-- **Cum l-am fixat:**
+- **Unde era:** Fisier storage.py, functiile de list_events si soft_delete_event
+- **Cum l-am găsit:** testele de delete events nu functionau si asa mi-am dat seama ca ar trebui sa schimb ceva in logica de stergere din storage
+- **Cum l-am fixat:** Initial m-am gandit sa sterg direct din dictionarul de events id-ul la event si gata se rezolva tot. intr-adevar testele treceau in acest fel dar care mai era sensul la cuvantul soft in soft_delete... atunci am zis ca practic trebuie sa verific daca eventul a primit o valoare la campul deleted_at si in cazul acela insemna ca ar fi sters. deci in list_events() nu il mai afisam, iar in soft_delete_event() returnai None daca era deja sters pentru a putea primi codul de eroare 404 ca nu il mai gaseste.
 
 ---
 
