@@ -2,6 +2,7 @@
 
 A small FastAPI service for tracking user activity events.
 """
+from datetime import datetime
 from typing import Optional
 
 from fastapi import FastAPI, HTTPException, Query
@@ -59,6 +60,14 @@ def get_user_events(user_id: int, since: Optional[str] = Query(None)) -> list[Ev
     user = storage.get_user(user_id)
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
+    if since:
+        try:
+            datetime.fromisoformat(since)
+        except ValueError:
+            raise HTTPException(
+                status_code=400, 
+                detail="Invalid date format. Use ISO 8601: YYYY-MM-DDTHH:MM:SSZ"
+            )
     return storage.list_user_events(user_id = user_id, since= since)
 
 

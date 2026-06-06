@@ -26,10 +26,11 @@ Pentru fiecare bug, scrie 2-3 propoziții:
 
 - **Decizii de design:** Am adaugat in storage metoda list_storage_events care primeste ca parametri user_id si un string since Optional si returneaza o lista de evenimente, apoi am facut filtrarea sa pun in lista userului doar evenimentele care coincid cu id-ul lui si care nu au fost sterse cumva inainte. daca exista parametrul since se filtreaza si dupa el si verifica daca data de created_at este mai mare decat since_date si apoi returnam lista cu evenimentele user-ului
 In main in functia de get a aplicatiei se verifica daca user-ul exista si apoi se returneaza lista
-- **Cazuri edge pe care le-ai acoperit:** parametru since absent, soft deleted events, user inexistent
+- **Cazuri edge pe care le-ai acoperit:** parametru since absent, soft deleted events, user inexistent, parametru since invalid
 - **Teste adăugate:** 1.Test care verifica ca returneaza toate evenimentele daca parametrul since lipseste, 2.Test care verifica ca evenimente sterse cu soft delete nu apar in lista returnata. 
 3.Test care verifica daca returneaza 404 daca userul cu id-ul cerut nu exista
 4.Test care verifica daca se returneaza corect si datele cu parametrul since
+5.Test care verifica daca se returneaza corect 400 in cazul in care data introdusa este invalida
 
 ---
 
@@ -38,7 +39,7 @@ In main in functia de get a aplicatiei se verifica daca user-ul exista si apoi s
 - **Ce ai folosit:** Copilot
 - **Prompturi reprezentative folosite:** Prompt: poti sa ma ajuti sa fac 4 teste pentru aceasta noua metoda unul in care sa listezi fara since date, unul in care sa listezi fara since date dar acel event sa fie deleted, unul in care sa nu existe userul si unul in care sa listezi cu since day 
 - **Unde te-a ajutat cel mai mult:** La construirea testelor, nu stiu sintaxa de python asa de bine si atunci i-am zis ce teste trebuie facute si l-am rugat sa ma ajute sa le fac
-- **Unde te-a încurcat sau ți-a dat un răspuns greșit:** Initial s-a incurcat cu formatul datelor si ultimul test nu trecea
+- **Unde te-a încurcat sau ți-a dat un răspuns greșit:** Initial s-a incurcat cu formatul datelor si ultimele teste nu treceau
 - **Cum ai verificat ce-a generat:** Am rulat testele si ziceau ca au dat pass, am verificat si in /docs cu operatii manuale sa vad daca totul functioneaza cum ar trebui
 
 

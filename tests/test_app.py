@@ -239,3 +239,13 @@ def test_get_user_events_with_since_filters_by_date(client, user):
     assert len(events) == 2
     assert events[0]["event_type"] == "page_view"
     assert events[1]["event_type"] == "click"
+
+
+def test_get_user_events_with_invalid_since_format_returns_400(client, user):
+    response = client.get(
+        f"/users/{user['id']}/events",
+        params={"since": "invalid-date"}
+    )
+    assert response.status_code == 400
+    assert "Invalid date format" in response.json()["detail"]
+
