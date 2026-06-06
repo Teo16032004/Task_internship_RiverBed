@@ -172,3 +172,70 @@ def test_pagination_after_delete_stays_consistent(client, user):
     assert len(page1_ids) == 3
     assert len(page2_ids) == 2
     assert set(page1_ids).isdisjoint(page2_ids), "Pages should not overlap"
+
+
+def test_get_user_events_without_since_returns_all(client, user):
+    for event_type in ["login", "page_view", "click"]:
+        client.post(
+            "/events",
+            json={"user_id": user["id"], "event_type": event_type, "metadata": {}},
+        )
+
+    response = client.get(f"/users/{user['id']}/events")
+    assert response.status_code == 200
+    events = response.json()
+    assert len(events) == 3
+
+def test_get_user_events_excludes_deleted(client, user):
+    """Evenimentele șterse nu trebuie să apară în listă."""
+    # Creează 2 eventos
+    event_ids = []
+    for event_type in ["login", "logout"]:
+        resp = client.post(
+            "/events",
+            json={"user_id": user["id"], "event_type": event_type, "metadata": {}},
+        )
+        event_ids.append(resp.json()["id"])
+
+    # Șterge primul event
+    client.delete(f"/events/{event_ids[0]}")
+
+    # Lista events - trebuie să apară doar cel ne-șters
+    response = client.get(f"/users/{user['id']}/events")
+    assert response.status_code == 200
+    events = response.json()
+    assert len(events) == 1
+    assert events[0]["id"] == event_ids[1]
+
+def test_get_user_events_nonexistent_user_returns_404(client):
+    response = client.get("/users/9999/events")
+    assert response.status_code == 404
+
+
+def test_get_user_events_with_since_filters_by_date(client, user):
+    from datetime import datetime, timedelta, timezone
+    import time
+    past_event = client.post(
+        "/events",
+        json={"user_id": user["id"], "event_type": "login", "metadata": {}},
+    )
+
+    since_date = datetime.now(timezone.utc)
+    since_iso = since_date.isoformat()
+
+    # Mică pauză pentru a se asigura că timestamps-urile sunt diferite
+    time.sleep(0.01)
+
+    for event_type in ["page_view", "click"]:
+        client.post(
+            "/events",
+            json={"user_id": user["id"], "event_type": event_type, "metadata": {}},
+        )
+
+
+    response = client.get(f"/users/{user['id']}/events", params={"since": since_iso})
+    assert response.status_code == 200
+    events = response.json()
+    assert len(events) == 2
+    assert events[0]["event_type"] == "page_view"
+    assert events[1]["event_type"] == "click"

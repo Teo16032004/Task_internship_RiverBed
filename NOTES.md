@@ -1,10 +1,5 @@
-# NOTES — [Numele tău]
+# NOTES — Teodor Suteu
 
-Copiază acest fișier ca `NOTES.md` și completează-l.
-
-Vrem să fie scurt — maxim 1 pagină. Mai mult contează claritatea decât lungimea.
-
----
 
 ## 1. Bug-urile găsite
 
@@ -29,31 +24,34 @@ Pentru fiecare bug, scrie 2-3 propoziții:
 
 ## 2. Endpoint-ul nou
 
-- **Decizii de design:** (ce-ai considerat? ce ai ales și de ce?)
-- **Cazuri edge pe care le-ai acoperit:**
-- **Teste adăugate:** (ce verifică fiecare)
+- **Decizii de design:** Am adaugat in storage metoda list_storage_events care primeste ca parametri user_id si un string since Optional si returneaza o lista de evenimente, apoi am facut filtrarea sa pun in lista userului doar evenimentele care coincid cu id-ul lui si care nu au fost sterse cumva inainte. daca exista parametrul since se filtreaza si dupa el si verifica daca data de created_at este mai mare decat since_date si apoi returnam lista cu evenimentele user-ului
+In main in functia de get a aplicatiei se verifica daca user-ul exista si apoi se returneaza lista
+- **Cazuri edge pe care le-ai acoperit:** parametru since absent, soft deleted events, user inexistent
+- **Teste adăugate:** 1.Test care verifica ca returneaza toate evenimentele daca parametrul since lipseste, 2.Test care verifica ca evenimente sterse cu soft delete nu apar in lista returnata. 
+3.Test care verifica daca returneaza 404 daca userul cu id-ul cerut nu exista
+4.Test care verifica daca se returneaza corect si datele cu parametrul since
 
 ---
 
 ## 3. Folosirea AI-ului
 
-Fii cinstit. Nu pierzi puncte dacă spui adevărul, dimpotrivă.
+- **Ce ai folosit:** Copilot
+- **Prompturi reprezentative folosite:** Prompt: poti sa ma ajuti sa fac 4 teste pentru aceasta noua metoda unul in care sa listezi fara since date, unul in care sa listezi fara since date dar acel event sa fie deleted, unul in care sa nu existe userul si unul in care sa listezi cu since day 
+- **Unde te-a ajutat cel mai mult:** La construirea testelor, nu stiu sintaxa de python asa de bine si atunci i-am zis ce teste trebuie facute si l-am rugat sa ma ajute sa le fac
+- **Unde te-a încurcat sau ți-a dat un răspuns greșit:** Initial s-a incurcat cu formatul datelor si ultimul test nu trecea
+- **Cum ai verificat ce-a generat:** Am rulat testele si ziceau ca au dat pass, am verificat si in /docs cu operatii manuale sa vad daca totul functioneaza cum ar trebui
 
-- **Ce ai folosit:** (ChatGPT / Cursor / Copilot / altele)
-- **Prompturi reprezentative folosite:** (scrie prompturile pe care le consideri relevante + context scurt: la ce te-au ajutat)
-- **Unde te-a ajutat cel mai mult:**
-- **Unde te-a încurcat sau ți-a dat un răspuns greșit:** (foarte interesant pentru noi!)
-- **Cum ai verificat ce-a generat:**
-- **Anexă opțională — export chat:** (dacă vrei, poți adăuga un export de chat relevant)
 
 ---
 
 ## 4. Ce-ai face cu mai mult timp
 
-(Lista scurtă, 3-5 puncte. Arată-ne că ai văzut limitele actuale.)
+1.O baza de date reala orice SQL nu prea conteaza, ceva in care sa stochezi userii si evenimentele pentru persistenta ca atunci cand dai run la aplicatie sa nu mai trebuiasca mereu sa creezi useri si evenimente noi
+2.Autentificarea userilor
+3.Un Frontend minimal care sa te ajute sa vezi si sa testezi mai usor totul
 
 ---
 
 ## 5. Întrebări / observații
 
-(Orice nu a fost clar, orice ai vrea să discuți cu noi.)
+Mi-a placut mult sa lucrez la aceasta tema/aplicatie. Am vazut cum functioneaza un backend de FastAPI in python si m-am familizat cu sintaxa (sunt obisnuit cu Java SpringBoot)
